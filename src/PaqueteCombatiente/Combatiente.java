@@ -10,9 +10,9 @@ public abstract class Combatiente {
 	private final int id;
 	
 	private final String nombre;
-	private int vidaMax;
+	private int vidaMaxBase;
 	private int vidaActual;
-	private int energiaMax;
+	private int energiaMaxBase;
 	private int energiaActual;
 	
 	private Map<Tecnica, Integer> usosRestantesPorTecnica;
@@ -29,9 +29,9 @@ public abstract class Combatiente {
 		
 	    this.id = ++contadorId;
 	    this.nombre = nombre;
-	    this.vidaMax = vidaMax;
+	    this.vidaMaxBase = vidaMax;
 	    this.vidaActual = vidaMax;
-	    this.energiaMax = energiaMax;
+	    this.energiaMaxBase = energiaMax;
 	    this.energiaActual = energiaMax;
 	    
 	    this.usosRestantesPorTecnica = new HashMap<>();
@@ -47,7 +47,7 @@ public abstract class Combatiente {
 	}
 
 	public int getVidaMax() {
-		return vidaMax;
+		return vidaMaxBase;
 	}
 
 	public int getVidaActual() {
@@ -55,7 +55,7 @@ public abstract class Combatiente {
 	}
 
 	public int getEnergiaMax() {
-		return energiaMax;
+		return energiaMaxBase;
 	}
 
 	public int getEnergiaActual() {
