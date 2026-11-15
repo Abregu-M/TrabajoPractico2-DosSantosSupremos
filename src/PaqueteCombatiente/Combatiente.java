@@ -22,6 +22,8 @@ public abstract class Combatiente {
 	private Map<Tecnica, Integer> usosRestantesPorTecnica;
 	private Set<Equipamiento> equipamientos;
 	
+	private double reduccionDanioTemporal = 0;
+	
 	public Combatiente(String nombre, int vidaMax, int energiaMax) {
 		 if (vidaMax <= 1 || energiaMax <= 1) {
 		        throw new IllegalArgumentException("La vida y la energía máximas deben ser mayores a 1.");
@@ -182,7 +184,16 @@ public abstract class Combatiente {
 	}
 	
 	protected int modificarDanioRecibido(int danioBase) {
-	    return danioBase;
+	    int danio = danioBase;
+
+	    for (Equipamiento e : equipamientos) {
+	        danio += e.getModificadorDanioRecibido();
+	    }
+
+	    danio = Math.max(0, danio);
+	    danio = (int) (danio * (1 - reduccionDanioTemporal / 100.0));
+
+	    return danio;
 	}
 	
 	protected int modificarCostoEnergia(int costoBase) {
@@ -191,5 +202,9 @@ public abstract class Combatiente {
 	
 	public int modificarDanioProvocadoFinal(int danioBase) {
 		return modificarDanioProvocado(danioBase);
+	}
+	
+	public void activarDefensaTemporal() {
+	    reduccionDanioTemporal += (40 - reduccionDanioTemporal) / 2;
 	}
 }
