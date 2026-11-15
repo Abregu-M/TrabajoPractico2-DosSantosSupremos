@@ -1,13 +1,12 @@
-package paqueteCombatiente;
+package PaqueteCombatiente;
 
-public class HechiceroDelVacio extends Combatiente{
-
-	public HechiceroDelVacio(String nombre, int vidaMax, int energiaMax) {
-		super(nombre, vidaMax, energiaMax);
+public class HechiceroDelVacio extends Combatiente {
+	HechiceroDelVacio(int id, String nombre) {
+		super(id, nombre, 100, 40);
 	}
-	
+
 	@Override
-	protected int modificarCostoEnergia(int costoBase) {
-	    return (int) (super.modificarCostoEnergia(costoBase) * 0.8);
+	public int modificarCostoEnergia(int base) {
+		return Math.max(0, super.modificarCostoEnergia(base) - 2);
 	}
 }
