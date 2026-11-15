@@ -1,47 +1,41 @@
-package paqueteCombatiente;
+package PaqueteCombatiente;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import PaqueteTecnica.Tecnica;
+import PaqueteEquipamiento.Equipamiento;
 
-import paqueteEquipamiento.Equipamiento;
-import paqueteTecnica.Tecnica;
-
+// MODIFICADO - PARTE 1: estado, identidad y reglas de equipamiento.
 public abstract class Combatiente {
-	private static int contadorId = 0;
 	private final int id;
-	
 	private final String nombre;
-	private final int vidaMaxBase;
-	private final int energiaMaxBase;
-	
+	private int vidaMaxima;
 	private int vidaActual;
+	private int energiaMaxima;
 	private int energiaActual;
-	
-	private Map<Tecnica, Integer> usosRestantesPorTecnica;
-	private Set<Equipamiento> equipamientos;
-	
-	private double reduccionDanioTemporal = 0;
-	
-	public Combatiente(String nombre, int vidaMax, int energiaMax) {
-		 if (vidaMax <= 1 || energiaMax <= 1) {
-		        throw new IllegalArgumentException("La vida y la energía máximas deben ser mayores a 1.");
-		    }
-		 
-		 if (nombre == null || nombre.trim().isEmpty()) {
-		        throw new IllegalArgumentException("El nombre no puede estar vacío.");
-		    }
-		
-	    this.id = ++contadorId;
-	    this.nombre = nombre;
-	    this.vidaMaxBase = vidaMax;
-	    this.vidaActual = vidaMax;
-	    this.energiaMaxBase = energiaMax;
-	    this.energiaActual = energiaMax;
-	    
-	    this.usosRestantesPorTecnica = new HashMap<>();
-	    this.equipamientos = new HashSet<>();
+	private boolean enCombate = false;
+	private final Map<Tecnica, Integer> usosPorTecnica = new LinkedHashMap<>();
+	private int defensaTecnica;
+
+	private final List<Equipamiento> equipamientos;
+
+	// El ID lo recibira del CreadorCombatientes, como indica el UML.
+	protected Combatiente(int id, String nombre, int vidaMax, int energiaMax) {
+		if (id <= 0 || vidaMax <= 0 || energiaMax <= 0) {
+			throw new IllegalArgumentException("ID, vida y energia deben ser positivos.");
+		}
+		if (nombre == null || nombre.trim().isEmpty()) {
+			throw new IllegalArgumentException("El nombre no puede estar vacio.");
+		}
+		this.id = id;
+		this.nombre = nombre;
+		this.vidaMaxima = vidaMax;
+		this.vidaActual = vidaMax;
+		this.energiaMaxima = energiaMax;
+		this.energiaActual = energiaMax;
+		this.equipamientos = new ArrayList<>();
 	}
 
 	public int getId() {
@@ -52,159 +46,223 @@ public abstract class Combatiente {
 		return nombre;
 	}
 
-	public int getVidaMax() {
-	    int vidaMax = vidaMaxBase;
-
-	    for (Equipamiento e : equipamientos) {
-	        vidaMax += e.getModificadorVidaMaxima();
-	    }
-
-	    return vidaMax;
-	}
-
 	public int getVidaActual() {
 		return vidaActual;
-	}
-
-	public int getEnergiaMax() {
-	    int energiaMax = energiaMaxBase;
-
-	    for (Equipamiento e : equipamientos) {
-	        energiaMax += e.getModificadorEnergiaMaxima();
-	    }
-
-	    return energiaMax;
 	}
 
 	public int getEnergiaActual() {
 		return energiaActual;
 	}
 
-	public Map<Tecnica, Integer> getUsosRestantesPorTecnica() {
-	    return new HashMap<>(usosRestantesPorTecnica);
+	public boolean isEnCombate() {
+		return enCombate;
 	}
 
-	public Set<Equipamiento> getEquipamientos() {
-	    return new HashSet<>(equipamientos);
+	public int getVidaMaxima() {
+		return vidaMaxima;
+	}
+
+	public int getEnergiaMaxima() {
+		return energiaMaxima;
+	}
+
+	public int getVidaMax() {
+		return getVidaMaxima();
+	}
+
+	public int getEnergiaMax() {
+		return getEnergiaMaxima();
+	}
+
+	public void setVidaActual(int vidaActual) {
+		if (vidaActual < 0 || vidaActual > getVidaMax()) {
+			throw new IllegalArgumentException("Vida fuera de los limites.");
+		}
+		this.vidaActual = vidaActual;
+	}
+
+	public void setEnergiaActual(int energiaActual) {
+		if (energiaActual < 0 || energiaActual > getEnergiaMax()) {
+			throw new IllegalArgumentException("Energia fuera de los limites.");
+		}
+		this.energiaActual = energiaActual;
+	}
+
+	public List<Equipamiento> getEquipamientos() {
+		return new ArrayList<>(equipamientos);
+	}
+
+	public void equipar(Equipamiento equipo) {
+		validarCambioEquipamiento();
+		if (equipo == null) {
+			throw new IllegalArgumentException("El equipo no puede ser nulo.");
+		}
+		if (equipamientos.size() == 3) {
+			throw new IllegalStateException("Solo se permiten tres equipamientos.");
+		}
+		for (Equipamiento equipado : equipamientos) {
+			if (equipado.getCategoria() == equipo.getCategoria()) {
+				throw new IllegalArgumentException("Ya lleva un equipo de esa categoria.");
+			}
+		}
+		equipamientos.add(equipo);
+		vidaMaxima += equipo.getModificadorVidaMaxima();
+		energiaMaxima += equipo.getModificadorEnergiaMaxima();
+	}
+
+	public void desequipar(Equipamiento equipo) {
+		validarCambioEquipamiento();
+		if (equipo == null || !equipamientos.contains(equipo)) {
+			throw new IllegalArgumentException("No lleva ese equipamiento.");
+		}
+		equipamientos.remove(equipo);
+		vidaMaxima -= equipo.getModificadorVidaMaxima();
+		energiaMaxima -= equipo.getModificadorEnergiaMaxima();
+		ajustarActualesAMaximos();
+	}
+
+	private void validarCambioEquipamiento() {
+		if (enCombate) {
+			throw new IllegalStateException("No se puede cambiar equipo durante el combate.");
+		}
+	}
+
+	private void ajustarActualesAMaximos() {
+		vidaActual = Math.min(vidaActual, getVidaMax());
+		energiaActual = Math.min(energiaActual, getEnergiaMax());
+	}
+
+	public void iniciarCombate() {
+		if (enCombate) {
+			throw new IllegalStateException("Ya esta en combate.");
+		}
+		vidaActual = getVidaMax();
+		energiaActual = getEnergiaMax();
+		defensaTecnica = 0;
+		enCombate = true;
+	}
+
+	public void finalizarCombate() {
+		enCombate = false;
+		defensaTecnica = 0;
+	}
+
+	public int modificarDanioProvocado(int base) {
+		int total = base;
+		for (Equipamiento equipo : equipamientos) {
+			total += equipo.getModificadorDanioProvocado();
+		}
+		return Math.max(0, total);
+	}
+
+	public int modificarDanioRecibido(int base) {
+		int total = base - defensaTecnica;
+		for (Equipamiento equipo : equipamientos) {
+			total -= equipo.getModificadorDanioRecibido();
+		}
+		return Math.max(0, total);
+	}
+
+	public int modificarCostoEnergia(int base) {
+		return Math.max(0, base);
+	}
+
+	public boolean estaEnPie() {
+		return vidaActual > 0;
+	}
+
+	public void aprenderTecnica(Tecnica tecnica) {
+		validarCambioEquipamiento();
+		if (tecnica == null || usosPorTecnica.containsKey(tecnica)) {
+			throw new IllegalArgumentException("Tecnica nula o ya aprendida.");
+		}
+		usosPorTecnica.put(tecnica, 0);
+	}
+
+	public Map<Tecnica, Integer> getUsosPorTecnica() {
+		return new LinkedHashMap<>(usosPorTecnica);
+	}
+
+	public int getUsosRestantes(Tecnica tecnica) {
+		Integer usados = usosPorTecnica.get(tecnica);
+		return usados == null ? 0 : 5 - usados;
+	}
+
+	public List<Tecnica> getTecnicas() {
+		return new ArrayList<>(usosPorTecnica.keySet());
+	}
+
+	private void validarActor() {
+		if (!enCombate || !estaEnPie()) {
+			throw new IllegalStateException("Debe estar en combate y en pie.");
+		}
+	}
+
+	public void atacar(Combatiente objetivo) {
+		validarActor();
+		if (objetivo == null || objetivo == this || !objetivo.enCombate || !objetivo.estaEnPie()) {
+			throw new IllegalArgumentException("Objetivo invalido.");
+		}
+		objetivo.recibirDanio(modificarDanioProvocado(10));
+	}
+
+	public void usarTecnica(Tecnica tecnica, Combatiente objetivo) {
+		validarActor();
+		if (tecnica == null || getUsosRestantes(tecnica) == 0) {
+			throw new IllegalArgumentException("No conoce la tecnica o no tiene usos.");
+		}
+		int costo = modificarCostoEnergia(tecnica.getCostoEnergia());
+		if (energiaActual < costo) {
+			throw new IllegalStateException("Energia insuficiente.");
+		}
+		// La tecnica valida el objetivo antes de aplicar su efecto.
+		tecnica.ejecutar(this, objetivo);
+		energiaActual -= costo;
+		usosPorTecnica.put(tecnica, usosPorTecnica.get(tecnica) + 1);
 	}
 
 	public void recibirDanio(int danio) {
-	    if (danio <= 0) {
-	        throw new IllegalArgumentException("El daño recibido debe ser positivo");
-	    }
-	    
-	    int danioFinal = modificarDanioRecibido(danio);
-	    vidaActual = Math.max(0, vidaActual - danioFinal);
+		vidaActual = Math.max(0, vidaActual - modificarDanioRecibido(danio));
+	}
+
+	public void perderEnergia(int cantidad) {
+		energiaActual = Math.max(0, energiaActual - Math.max(0, cantidad));
 	}
 
 	public void recuperarVida(int cantidad) {
-		if (cantidad <= 0) {
-	        throw new IllegalArgumentException("La vida recuperada debe ser positiva");
-	    }
-	    vidaActual = Math.min(getVidaMax(), vidaActual + cantidad);
+		if (estaEnPie()) {
+			vidaActual = Math.min(vidaMaxima, vidaActual + Math.max(0, cantidad));
+		}
 	}
 
 	public void recuperarEnergia(int cantidad) {
-		if (cantidad <= 0) {
-	        throw new IllegalArgumentException("La energía recuperada debe ser positiva");
-	    }
-	    energiaActual = Math.min(getEnergiaMax(), energiaActual + cantidad);
+		if (estaEnPie()) {
+			energiaActual = Math.min(energiaMaxima, energiaActual + Math.max(0, cantidad));
+		}
 	}
-	
-	public void equipar(Equipamiento equipamiento) {
-	    if (equipamiento == null) {
-	        throw new IllegalArgumentException("El equipamiento no puede ser nulo.");
-	    }
 
-	    if (equipamientos.size() >= 3) {
-	        throw new IllegalArgumentException("El combatiente no puede llevar más de 3 equipamientos.");
-	    }
-
-	    for (Equipamiento e : equipamientos) {
-	        if (e.getCategoria() == equipamiento.getCategoria()) {
-	            throw new IllegalArgumentException("Ya existe un equipamiento de esa categoría.");
-	        }
-	    }
-
-	    equipamientos.add(equipamiento);
+	public boolean tieneDefensaActiva() {
+		return defensaTecnica > 0;
 	}
-	
-	public void desequipar(Equipamiento equipamiento) {
-	    if (!equipamientos.remove(equipamiento)) {
-	        throw new IllegalArgumentException("El combatiente no tiene equipado ese objeto.");
-	    }
 
-	    if (vidaActual > getVidaMax()) {
-	        vidaActual = getVidaMax();
-	    }
-
-	    if (energiaActual > getEnergiaMax()) {
-	        energiaActual = getEnergiaMax();
-	    }
+	public void activarDefensa(int cantidad) {
+		defensaTecnica = Math.max(defensaTecnica, cantidad);
 	}
-	
-	public void aprenderTecnica(Tecnica tecnica) {
-	    if (tecnica == null) {
-	        throw new IllegalArgumentException("La técnica no puede ser nula.");
-	    }
-	    if (usosRestantesPorTecnica.containsKey(tecnica)) {
-	        throw new IllegalArgumentException("El combatiente ya conoce esa técnica.");
-	    }
 
-	    usosRestantesPorTecnica.put(tecnica, 5);
+	@Override
+	public final int hashCode() {
+		return Integer.hashCode(id);
 	}
-	
-	public void usarTecnica(Tecnica tecnica, Combatiente objetivo) {
-	    if (tecnica == null || objetivo == null) {
-	        throw new IllegalArgumentException("La técnica y el objetivo no pueden ser nulos.");
-	    }
 
-	    if (!usosRestantesPorTecnica.containsKey(tecnica)) {
-	        throw new IllegalArgumentException("El combatiente no conoce esa técnica.");
-	    }
-
-	    if (usosRestantesPorTecnica.get(tecnica) <= 0) {
-	        throw new IllegalStateException("No quedan usos disponibles.");
-	    }
-	    
-	    int costoEnergia = modificarCostoEnergia(tecnica.getCostoEnergia());
-
-	    if (energiaActual < costoEnergia) {
-	        throw new IllegalStateException("No hay energía suficiente.");
-	    }
-	    
-	    tecnica.ejecutar(this, objetivo);
-
-	    energiaActual -= costoEnergia;
-	    usosRestantesPorTecnica.put(tecnica, usosRestantesPorTecnica.get(tecnica) - 1);
-	}
-	
-	protected int modificarDanioProvocado(int danioBase) {
-	    return danioBase;
-	}
-	
-	protected int modificarDanioRecibido(int danioBase) {
-	    int danio = danioBase;
-
-	    for (Equipamiento e : equipamientos) {
-	        danio += e.getModificadorDanioRecibido();
-	    }
-
-	    danio = Math.max(0, danio);
-	    danio = (int) (danio * (1 - reduccionDanioTemporal / 100.0));
-
-	    return danio;
-	}
-	
-	protected int modificarCostoEnergia(int costoBase) {
-	    return costoBase;
-	}
-	
-	public int modificarDanioProvocadoFinal(int danioBase) {
-		return modificarDanioProvocado(danioBase);
-	}
-	
-	public void activarDefensaTemporal() {
-	    reduccionDanioTemporal += (40 - reduccionDanioTemporal) / 2;
+	@Override
+	public final boolean equals(Object otro) {
+		if (this == otro) {
+			return true;
+		}
+		if (!(otro instanceof Combatiente)) {
+			return false;
+		}
+		Combatiente combatiente = (Combatiente) otro;
+		return id == combatiente.id;
 	}
 }

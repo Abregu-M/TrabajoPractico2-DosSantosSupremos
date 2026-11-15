@@ -1,13 +1,12 @@
-package paqueteCombatiente;
+package PaqueteCombatiente;
 
-public class MonjeDelCuerpoCelestial extends Combatiente{
-
-	public MonjeDelCuerpoCelestial(String nombre, int vidaMax, int energiaMax) {
-		super(nombre, vidaMax, energiaMax);
+public class MonjeDelCuerpoCelestial extends Combatiente {
+	MonjeDelCuerpoCelestial(int id, String nombre) {
+		super(id, nombre, 100, 40);
 	}
-	
+
 	@Override
-	protected int modificarCostoEnergia(int danioBase) {
-	    return (int) (super.modificarCostoEnergia(danioBase) * 0.8);
+	public int modificarDanioRecibido(int base) {
+		return Math.max(0, super.modificarDanioRecibido(base) - 3);
 	}
 }

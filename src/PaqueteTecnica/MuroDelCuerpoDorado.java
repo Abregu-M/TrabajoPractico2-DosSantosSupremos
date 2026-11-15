@@ -1,15 +1,14 @@
-package paqueteTecnica;
+package PaqueteTecnica;
+import PaqueteCombatiente.Combatiente;
 
-import paqueteCombatiente.Combatiente;
+public class MuroDelCuerpoDorado extends Tecnica {
+    @Override
+    public boolean esDefensiva() { return true; }
 
-public class MuroDelCuerpoDorado extends Tecnica{
-
-	public MuroDelCuerpoDorado(String nombre, int costoEnergia) {
-		super(nombre, costoEnergia);
-	}
-
-	@Override
-	public void ejecutar(Combatiente ejecutor, Combatiente objetivo) {
-		objetivo.activarDefensaTemporal();
-	}
+    public MuroDelCuerpoDorado() { super("MuroDelCuerpoDorado", 8); }
+    @Override
+    public void ejecutar(Combatiente ejecutor, Combatiente objetivo) {
+        validarObjetivo(ejecutor, objetivo, true);
+        ejecutor.activarDefensa(5);
+    }
 }

@@ -1,0 +1,5 @@
+package PaqueteAcontecimientos;
+public enum TipoAcontecimiento {
+    INICIO_COMBATE, INICIO_ASALTO, ACCION_REALIZADA, ELIMINACION,
+    RESULTADO_COMBATE, PROCLAMACION
+}

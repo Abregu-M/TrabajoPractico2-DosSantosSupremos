@@ -1,29 +1,24 @@
-package paqueteEquipamiento;
+package PaqueteEquipamiento;
 
-public class Equipamiento {
+import PaqueteCombatiente.Combatiente;
 
-    private String nombre;
-    private CategoriaEquipamiento categoria;
+public abstract class Equipamiento {
+	private final String nombre;
+	private final CategoriaEquipamiento categoria;
+	private final int modificadorDanioProvocado;
+	private final int modificadorDanioRecibido;
+	private final int modificadorVidaMaxima;
+	private final int modificadorEnergiaMaxima;
 
-    private final int modificadorDanioProvocado;
-    private final int modificadorDanioRecibido;
-    private final int modificadorVidaMaxima;
-    private final int modificadorEnergiaMaxima;
-    
-    public CategoriaEquipamiento getCategoria() {
-        return categoria;
-    }
-
-    public Equipamiento(String nombre, CategoriaEquipamiento categoria, int modificadorDanioProvocado,
+	protected Equipamiento(String nombre, CategoriaEquipamiento categoria, int modificadorDanioProvocado,
 			int modificadorDanioRecibido, int modificadorVidaMaxima, int modificadorEnergiaMaxima) {
-		
-    	if (nombre == null || nombre.trim().isEmpty()) {
-	        throw new IllegalArgumentException("El nombre no puede estar vacío.");
-	    }
-    	if (categoria == null) {
-    	    throw new IllegalArgumentException("La categoría no puede ser nula.");
-    	}
-    	
+		if (nombre == null || nombre.trim().isEmpty() || categoria == null) {
+			throw new IllegalArgumentException("Nombre y categoria obligatorios.");
+		}
+		if (modificadorDanioProvocado < 0 || modificadorDanioRecibido < 0 || modificadorVidaMaxima < 0
+				|| modificadorEnergiaMaxima < 0) {
+			throw new IllegalArgumentException("Los modificadores no pueden ser negativos.");
+		}
 		this.nombre = nombre;
 		this.categoria = categoria;
 		this.modificadorDanioProvocado = modificadorDanioProvocado;
@@ -34,6 +29,10 @@ public class Equipamiento {
 
 	public String getNombre() {
 		return nombre;
+	}
+
+	public CategoriaEquipamiento getCategoria() {
+		return categoria;
 	}
 
 	public int getModificadorDanioProvocado() {
@@ -51,4 +50,8 @@ public class Equipamiento {
 	public int getModificadorEnergiaMaxima() {
 		return modificadorEnergiaMaxima;
 	}
+
+	public abstract void aplicarEfecto(Combatiente combatiente);
+
+	public abstract void removerEfecto(Combatiente combatiente);
 }

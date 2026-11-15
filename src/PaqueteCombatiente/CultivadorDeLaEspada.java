@@ -1,13 +1,12 @@
-package paqueteCombatiente;
+package PaqueteCombatiente;
 
 public class CultivadorDeLaEspada extends Combatiente {
-
-	public CultivadorDeLaEspada(String nombre, int vidaMax, int energiaMax) {
-		super(nombre, vidaMax, energiaMax);
+	CultivadorDeLaEspada(int id, String nombre) {
+		super(id, nombre, 100, 40);
 	}
-	
+
 	@Override
-	protected int modificarDanioProvocado(int danioBase) {
-	    return (int) (super.modificarDanioProvocado(danioBase) * 1.2);
+	public int modificarDanioProvocado(int base) {
+		return super.modificarDanioProvocado(base) + 5;
 	}
 }

@@ -1,8 +1,5 @@
-package paqueteEquipamiento;
+package PaqueteEquipamiento;
 
 public enum CategoriaEquipamiento {
-    ARMA,
-    ARMADURA,
-    ANILLO,
-    SELLO
+	ARMA, ARMADURA, ANILLO, SELLO
 }
