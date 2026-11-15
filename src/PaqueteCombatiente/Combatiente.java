@@ -9,7 +9,7 @@ public abstract class Combatiente {
 	private static int contadorId = 0;
 	private final int id;
 	
-	private String nombre;
+	private final String nombre;
 	private int vidaMax;
 	private int vidaActual;
 	private int energiaMax;
@@ -37,5 +37,62 @@ public abstract class Combatiente {
 	    this.usosRestantesPorTecnica = new HashMap<>();
 	    this.equipamientos = new HashSet<>();
 	}
+
+	public int getId() {
+		return id;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public int getVidaMax() {
+		return vidaMax;
+	}
+
+	public int getVidaActual() {
+		return vidaActual;
+	}
+
+	public int getEnergiaMax() {
+		return energiaMax;
+	}
+
+	public int getEnergiaActual() {
+		return energiaActual;
+	}
+
+	public Map<Tecnica, Integer> getUsosRestantesPorTecnica() {
+		return usosRestantesPorTecnica;
+	}
+
+	public Set<Equipamiento> getEquipamientos() {
+		return equipamientos;
+	}
+
+	public void setVidaMax(int vidaMax) {
+		this.vidaMax = vidaMax;
+	}
+
+	public void setVidaActual(int vidaActual) {
+		this.vidaActual = vidaActual;
+	}
+
+	public void setEnergiaMax(int energiaMax) {
+		this.energiaMax = energiaMax;
+	}
+
+	public void setEnergiaActual(int energiaActual) {
+		this.energiaActual = energiaActual;
+	}
+
+	public void setUsosRestantesPorTecnica(Map<Tecnica, Integer> usosRestantesPorTecnica) {
+		this.usosRestantesPorTecnica = usosRestantesPorTecnica;
+	}
+
+	public void setEquipamientos(Set<Equipamiento> equipamientos) {
+		this.equipamientos = equipamientos;
+	}
+	
 
 }

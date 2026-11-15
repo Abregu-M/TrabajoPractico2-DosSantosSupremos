@@ -7,10 +7,10 @@ public class Equipamiento {
     private String nombre;
     private CategoriaEquipamiento categoria;
 
-    private int modificadorDanioProvocado;
-    private int modificadorDanioRecibido;
-    private int modificadorVidaMaxima;
-    private int modificadorEnergiaMaxima;
+    private final int modificadorDanioProvocado;
+    private final int modificadorDanioRecibido;
+    private final int modificadorVidaMaxima;
+    private final int modificadorEnergiaMaxima;
     
     public CategoriaEquipamiento getCategoria() {
         return categoria;
@@ -34,7 +34,29 @@ public class Equipamiento {
 		this.modificadorEnergiaMaxima = modificadorEnergiaMaxima;
 	}
 
-	public void aplicarEfecto(Combatiente combatiente);
+	public String getNombre() {
+		return nombre;
+	}
+
+	public int getModificadorDanioProvocado() {
+		return modificadorDanioProvocado;
+	}
+
+	public int getModificadorDanioRecibido() {
+		return modificadorDanioRecibido;
+	}
+
+	public int getModificadorVidaMaxima() {
+		return modificadorVidaMaxima;
+	}
+
+	public int getModificadorEnergiaMaxima() {
+		return modificadorEnergiaMaxima;
+	}
+
+	public void aplicarEfecto(Combatiente combatiente) {
+		
+	}
 
     public void removerEfecto(Combatiente combatiente);
 }
