@@ -172,4 +172,12 @@ public abstract class Combatiente {
 	    energiaActual -= tecnica.getCostoEnergia();
 	    usosRestantesPorTecnica.put(tecnica, usosRestantesPorTecnica.get(tecnica) - 1);
 	}
+	
+	protected int calcularDanioProvocado(int danioBase) {
+	    return danioBase;
+	}
+	
+	protected int calcularDanioRecibido(int danioBase) {
+	    return danioBase;
+	}
 }
