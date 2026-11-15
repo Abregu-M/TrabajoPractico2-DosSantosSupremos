@@ -55,7 +55,8 @@ public class Equipamiento {
 	}
 
 	public void aplicarEfecto(Combatiente combatiente) {
-		
+		int nuevaVidaMax = combatiente.getVidaMax()+this.getModificadorVidaMaxima();
+		combatiente.setVidaMax(nuevaVidaMax);
 	}
 
     public void removerEfecto(Combatiente combatiente);

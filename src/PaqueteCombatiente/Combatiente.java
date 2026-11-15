@@ -70,16 +70,8 @@ public abstract class Combatiente {
 		return equipamientos;
 	}
 
-	public void setVidaMax(int vidaMax) {
-		this.vidaMax = vidaMax;
-	}
-
 	public void setVidaActual(int vidaActual) {
 		this.vidaActual = vidaActual;
-	}
-
-	public void setEnergiaMax(int energiaMax) {
-		this.energiaMax = energiaMax;
 	}
 
 	public void setEnergiaActual(int energiaActual) {
@@ -93,6 +85,4 @@ public abstract class Combatiente {
 	public void setEquipamientos(Set<Equipamiento> equipamientos) {
 		this.equipamientos = equipamientos;
 	}
-	
-
 }
