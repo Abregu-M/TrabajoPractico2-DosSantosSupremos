@@ -188,4 +188,8 @@ public abstract class Combatiente {
 	protected int modificarCostoEnergia(int costoBase) {
 	    return costoBase;
 	}
+	
+	public int modificarDanioProvocadoFinal(int danioBase) {
+		return modificarDanioProvocado(danioBase);
+	}
 }
