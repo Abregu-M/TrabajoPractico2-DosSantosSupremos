@@ -7,7 +7,7 @@ public class MonjeDelCuerpoCelestial extends Combatiente{
 	}
 	
 	@Override
-	protected int calcularDanioRecibido(int danioBase) {
-	    return (int) (super.calcularDanioRecibido(danioBase) * 0.8);
+	protected int modificarCostoEnergia(int danioBase) {
+	    return (int) (super.modificarCostoEnergia(danioBase) * 0.8);
 	}
 }

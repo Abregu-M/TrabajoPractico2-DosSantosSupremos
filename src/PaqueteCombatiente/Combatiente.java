@@ -87,10 +87,12 @@ public abstract class Combatiente {
 	}
 
 	public void recibirDanio(int danio) {
-		if (danio <= 0) {
+	    if (danio <= 0) {
 	        throw new IllegalArgumentException("El daño recibido debe ser positivo");
 	    }
-	    vidaActual = Math.max(0, vidaActual - danio);
+	    
+	    int danioFinal = modificarDanioRecibido(danio);
+	    vidaActual = Math.max(0, vidaActual - danioFinal);
 	}
 
 	public void recuperarVida(int cantidad) {
@@ -162,22 +164,28 @@ public abstract class Combatiente {
 	    if (usosRestantesPorTecnica.get(tecnica) <= 0) {
 	        throw new IllegalStateException("No quedan usos disponibles.");
 	    }
+	    
+	    int costoEnergia = modificarCostoEnergia(tecnica.getCostoEnergia());
 
-	    if (energiaActual < tecnica.getCostoEnergia()) {
+	    if (energiaActual < costoEnergia) {
 	        throw new IllegalStateException("No hay energía suficiente.");
 	    }
 	    
 	    tecnica.ejecutar(this, objetivo);
 
-	    energiaActual -= tecnica.getCostoEnergia();
+	    energiaActual -= costoEnergia;
 	    usosRestantesPorTecnica.put(tecnica, usosRestantesPorTecnica.get(tecnica) - 1);
 	}
 	
-	protected int calcularDanioProvocado(int danioBase) {
+	protected int modificarDanioProvocado(int danioBase) {
 	    return danioBase;
 	}
 	
-	protected int calcularDanioRecibido(int danioBase) {
+	protected int modificarDanioRecibido(int danioBase) {
 	    return danioBase;
+	}
+	
+	protected int modificarCostoEnergia(int costoBase) {
+	    return costoBase;
 	}
 }

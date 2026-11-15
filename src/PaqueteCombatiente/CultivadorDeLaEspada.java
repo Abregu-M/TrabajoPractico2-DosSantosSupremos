@@ -7,7 +7,7 @@ public class CultivadorDeLaEspada extends Combatiente {
 	}
 	
 	@Override
-	protected int calcularDanioProvocado(int danioBase) {
-	    return (int) (super.calcularDanioProvocado(danioBase) * 1.2);
+	protected int modificarDanioProvocado(int danioBase) {
+	    return (int) (super.modificarDanioProvocado(danioBase) * 1.2);
 	}
 }
