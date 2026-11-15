@@ -1,12 +1,12 @@
-package PaqueteCombatiente;
+package paqueteCombatiente;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import PaqueteEquipamiento.Equipamiento;
-import PaqueteTecnica.Tecnica;
+import paqueteEquipamiento.Equipamiento;
+import paqueteTecnica.Tecnica;
 
 public abstract class Combatiente {
 	private static int contadorId = 0;

@@ -1,6 +1,6 @@
-package PaqueteTecnica;
+package paqueteTecnica;
 
-import PaqueteCombatiente.Combatiente;
+import paqueteCombatiente.Combatiente;
 
 public abstract class Tecnica {
 

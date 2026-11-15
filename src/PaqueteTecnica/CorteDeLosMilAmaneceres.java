@@ -1,6 +1,6 @@
-package PaqueteTecnica;
+package paqueteTecnica;
 
-import PaqueteCombatiente.Combatiente;
+import paqueteCombatiente.Combatiente;
 
 public class CorteDeLosMilAmaneceres extends Tecnica {
 

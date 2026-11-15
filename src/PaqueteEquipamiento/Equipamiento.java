@@ -1,4 +1,4 @@
-package PaqueteEquipamiento;
+package paqueteEquipamiento;
 
 public class Equipamiento {
 

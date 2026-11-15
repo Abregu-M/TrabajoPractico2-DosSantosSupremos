@@ -1,4 +1,4 @@
-package PaqueteCombatiente;
+package paqueteCombatiente;
 
 public class HechiceroDelVacio extends Combatiente{
 
