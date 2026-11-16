@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+
+import PaqueteAcontecimientos.*;
 import PaqueteCombatiente.Combatiente;
+import PaquetePresentacion.CronistaDeLaSecta;
 import PaqueteTecnica.*;
 import PaqueteTorneo.*;
-import PaqueteAcontecimientos.*;
-import PaquetePresentacion.CronistaDeLaSecta;
 
 class TorneoTest {
     private static int id = 10000;

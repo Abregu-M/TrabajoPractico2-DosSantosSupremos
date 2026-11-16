@@ -3,9 +3,11 @@ package PaqueteCombatiente;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
-import PaqueteTecnica.Tecnica;
+
 import PaqueteEquipamiento.Equipamiento;
+import PaqueteTecnica.Tecnica;
+
+import java.util.LinkedHashMap;
 
 // MODIFICADO - PARTE 1: estado, identidad y reglas de equipamiento.
 public abstract class Combatiente {

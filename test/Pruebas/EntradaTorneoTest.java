@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import PaquetePrincipal.EntradaTorneo;
 import PaqueteCombatiente.*;
 import PaqueteEquipamiento.*;
+import PaquetePresentacion.HeraldoImperial;
 import PaqueteTecnica.*;
 import PaqueteTorneo.*;
-import PaquetePresentacion.HeraldoImperial;
 
 class EntradaTorneoTest {
     private EntradaTorneo entrada(String datos) {

@@ -11,11 +11,14 @@ public class CreadorCombatientes {
 		Combatiente combatiente;
 		if ("Cultivador de la Espada".equals(tipo)) {
 			combatiente = new CultivadorDeLaEspada(proximoId, nombre);
-		} else if ("Monje del Cuerpo Celestial".equals(tipo)) {
+		} 
+		else if ("Monje del Cuerpo Celestial".equals(tipo)) {
 			combatiente = new MonjeDelCuerpoCelestial(proximoId, nombre);
-		} else if ("Hechicero del Vacio".equals(tipo) || "Hechicero del Vacío".equals(tipo)) {
+		} 
+		else if ("Hechicero del Vacio".equals(tipo) || "Hechicero del Vacío".equals(tipo)) {
 			combatiente = new HechiceroDelVacio(proximoId, nombre);
-		} else {
+		} 
+		else {
 			throw new IllegalArgumentException("Tipo desconocido.");
 		}
 		escuela.preparar(combatiente);
