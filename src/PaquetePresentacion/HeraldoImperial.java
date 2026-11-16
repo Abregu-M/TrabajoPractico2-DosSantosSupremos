@@ -7,6 +7,7 @@ import java.util.Map;
 import PaqueteAcontecimientos.*;
 import PaqueteCombatiente.Combatiente;
 import PaqueteTorneo.Pareja;
+import PaqueteEquipamiento.Equipamiento;
 
 // Unica clase que escribe por pantalla. La logica no depende de estos textos.
 public class HeraldoImperial implements Observador {
@@ -23,14 +24,28 @@ public class HeraldoImperial implements Observador {
 	}
 
 	public void mostrarInscripciones(List<Pareja> parejas) {
-		anunciar("===============================================================");
-		anunciar("                  EL TORNEO DE LOS INMORTALES");
-		anunciar("              La eleccion de los Dos Santos Supremos");
-		anunciar("===============================================================");
-		anunciar("\nPAREJAS INSCRIPTAS: " + parejas.size());
-		for (int i = 0; i < parejas.size(); i++) {
-			anunciar(String.format("  %d. %s", i + 1, parejas.get(i).getNombre()));
-		}
+	    anunciar("===============================================================");
+	    anunciar("                  EL TORNEO DE LOS INMORTALES");
+	    anunciar("              La eleccion de los Dos Santos Supremos");
+	    anunciar("===============================================================");
+	    anunciar("\nPAREJAS INSCRIPTAS: " + parejas.size());
+
+	    for (int i = 0; i < parejas.size(); i++) {
+	        Pareja pareja = parejas.get(i);
+
+	        anunciar(String.format("\n  %d. %s", i + 1, pareja.getNombre()));
+
+	        for (Combatiente combatiente : pareja.getIntegrantes()) {
+	            String equipamientos = combatiente.getEquipamientos().isEmpty()
+	                    ? "Sin equipamiento"
+	                    : combatiente.getEquipamientos().stream()
+	                            .map(Equipamiento::getNombre)
+	                            .collect(java.util.stream.Collectors.joining(", "));
+
+	            anunciar(String.format("     %-15s | %s",
+	                    combatiente.getNombre(), equipamientos));
+	        }
+	    }
 	}
 
 	@Override
