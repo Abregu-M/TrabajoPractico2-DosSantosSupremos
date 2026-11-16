@@ -3,11 +3,17 @@ package PaqueteTecnica;
 import PaqueteCombatiente.Combatiente;
 
 public abstract class Tecnica {
-    public boolean esRecuperacion() { return false; }
-    public boolean esDefensiva() { return false; }
-    public String getNombreVisible() {
-        return nombre.replaceAll("([a-z])([A-Z])", "$1 $2");
-    }
+	public boolean esRecuperacion() {
+		return false;
+	}
+
+	public boolean esDefensiva() {
+		return false;
+	}
+
+	public String getNombreVisible() {
+		return nombre.replaceAll("([a-z])([A-Z])", "$1 $2");
+	}
 
 	private final String nombre;
 	private final int costoEnergia;

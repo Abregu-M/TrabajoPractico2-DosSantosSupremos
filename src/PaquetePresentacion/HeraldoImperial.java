@@ -47,24 +47,15 @@ public class HeraldoImperial implements Observador {
 			anunciar("---------------------------------------------------------------");
 			break;
 		case INICIO_ASALTO:
-		    anunciar("\n  [ " + e.obtenerDatos() + " ]");
-		    anunciar(String.format(
-		        "    %-18s    %-18s | %-30s | %-10s | %-7s | %-5s",
-		        "ATACANTE", "OBJETIVO", "ACCION", "VIDA", "ENERGIA", "USOS"
-		    ));
-		    break;
+			anunciar("\n  [ " + e.obtenerDatos() + " ]");
+			anunciar(String.format("    %-18s    %-18s | %-30s | %-10s | %-7s | %-5s", "ATACANTE", "OBJETIVO", "ACCION",
+					"VIDA", "ENERGIA", "USOS"));
+			break;
 		case ACCION_REALIZADA:
-		    anunciar(String.format(
-		        "    %-18s -> %-18s | %-30s | %3d -> %-3d | %7d | %2s",
-		        e.getAtacante(),
-		        e.getObjetivo(),
-		        e.getAccion(),
-		        e.getVidaAntes(),
-		        e.getVidaDespues(),
-		        e.getEnergiaRestante(),
-		        e.getUsosRestantes() == -1 ? "-" : String.valueOf(e.getUsosRestantes())
-		    ));
-		    break;
+			anunciar(String.format("    %-18s -> %-18s | %-30s | %3d -> %-3d | %7d | %2s", e.getAtacante(),
+					e.getObjetivo(), e.getAccion(), e.getVidaAntes(), e.getVidaDespues(), e.getEnergiaRestante(),
+					e.getUsosRestantes() == -1 ? "-" : String.valueOf(e.getUsosRestantes())));
+			break;
 		case ELIMINACION:
 			anunciar("    ** " + e.obtenerDatos());
 			break;

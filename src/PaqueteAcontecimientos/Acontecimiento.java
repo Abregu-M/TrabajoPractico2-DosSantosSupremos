@@ -154,6 +154,6 @@ public final class Acontecimiento {
     }
 
     public int getUsosRestantes() {
-        return usosRestantes;
-    }
+		return usosRestantes;
+	}
 }

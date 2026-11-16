@@ -1,4 +1,5 @@
 package PaqueteAcontecimientos;
+
 public interface Observador {
-    void notificar(Acontecimiento evento);
+	void notificar(Acontecimiento evento);
 }

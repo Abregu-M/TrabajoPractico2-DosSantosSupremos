@@ -67,23 +67,14 @@ public class Combate {
 	private void anunciar(TipoAcontecimiento tipo, String datos) {
 		notificar(new Acontecimiento(tipo, ronda, asalto, datos));
 	}
-	
-	private void anunciarAccion(Combatiente atacante, Combatiente objetivo,
-	        String accion, int vidaAntes, int usosRestantes) {
 
-	    Acontecimiento evento = new Acontecimiento(
-	        ronda,
-	        asalto,
-	        atacante.getNombre(),
-	        objetivo.getNombre(),
-	        accion,
-	        vidaAntes,
-	        objetivo.getVidaActual(),
-	        atacante.getEnergiaActual(),
-	        usosRestantes
-	    );
+	private void anunciarAccion(Combatiente atacante, Combatiente objetivo, String accion, int vidaAntes,
+			int usosRestantes) {
 
-	    notificar(evento);
+		Acontecimiento evento = new Acontecimiento(ronda, asalto, atacante.getNombre(), objetivo.getNombre(), accion,
+				vidaAntes, objetivo.getVidaActual(), atacante.getEnergiaActual(), usosRestantes);
+
+		notificar(evento);
 	}
 
 	public Pareja ejecutar() {
@@ -194,13 +185,7 @@ public class Combate {
 			propia.usarTecnica(c, elegida, objetivo);
 			accion = elegida.getNombreVisible();
 		}
-		anunciarAccion(
-			    c,
-			    objetivo,
-			    accion,
-			    vidaAntes,
-			    elegida == null ? -1 : c.getUsosRestantes(elegida)
-			);
+		anunciarAccion(c, objetivo, accion, vidaAntes, elegida == null ? -1 : c.getUsosRestantes(elegida));
 		if (!objetivo.estaEnPie()) {
 			anunciar(TipoAcontecimiento.ELIMINACION, objetivo.getNombre() + " queda fuera de combate.");
 		}
