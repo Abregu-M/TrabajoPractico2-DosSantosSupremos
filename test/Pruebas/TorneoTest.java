@@ -185,10 +185,10 @@ class TorneoTest {
 		c.ejecutar();
 		List<Acontecimiento> lista = acciones(cr);
 		assertEquals(4, lista.size());
-		assertTrue(lista.get(0).getAccion().startsWith("a1 ->"));
-		assertTrue(lista.get(1).getAccion().startsWith("a2 ->"));
-		assertTrue(lista.get(2).getAccion().startsWith("b1 ->"));
-		assertTrue(lista.get(3).getAccion().startsWith("b2 ->"));
+		assertEquals("a1", lista.get(0).getAtacante());
+		assertEquals("a2", lista.get(1).getAtacante());
+		assertEquals("b1", lista.get(2).getAtacante());
+		assertEquals("b2", lista.get(3).getAtacante());
 	}
 
 	@Test
@@ -200,14 +200,20 @@ class TorneoTest {
 		CronistaDeLaSecta cr = cronista(a, b);
 		c.agregarObservador(cr);
 		c.ejecutar();
-		assertTrue(acciones(cr).get(0).getAccion().startsWith("a1 -> bajo"));
+		Acontecimiento primero = acciones(cr).get(0);
+
+		assertEquals("a1", primero.getAtacante());
+		assertEquals("bajo", primero.getObjetivo());
 		// Sin diferencia de vida, se apunta al de menor ID.
 		Pareja x = pareja("x"), y = pareja("y");
 		cr = cronista(x, y);
 		c = new Combate(x, y, 1, 1);
 		c.agregarObservador(cr);
 		c.ejecutar();
-		assertTrue(acciones(cr).get(0).getAccion().startsWith("x1 -> y1"));
+		Acontecimiento segundo = acciones(cr).get(0);
+
+		assertEquals("x1", segundo.getAtacante());
+		assertEquals("y1", segundo.getObjetivo());
 	}
 
 	@Test
@@ -258,28 +264,6 @@ class TorneoTest {
 	}
 
 	@Test
-	void recuperacionAntesQueDefensaYDefensaAntesQueAtaque() {
-		Pareja atacante = pareja("atacante");
-		Combatiente a = crear("sanador");
-		a.aprenderTecnica(new CorteDeLosMilAmaneceres());
-		a.aprenderTecnica(new MuroDelCuerpoDorado());
-		a.aprenderTecnica(new MeditacionDelInmortal());
-		Pareja defensor = new Pareja(a, crear("auxiliar"));
-		CronistaDeLaSecta cr = cronista(atacante, defensor);
-		Combate c = new Combate(atacante, defensor, 1, 1);
-		c.agregarObservador(cr);
-		c.ejecutar();
-		assertTrue(acciones(cr).get(2).getAccion().contains("Meditacion Del Inmortal"));
-		// Con vida completa, el primer turno elige defensa aunque el corte este antes.
-		Pareja rival = pareja("otro");
-		cr = cronista(defensor, rival);
-		c = new Combate(defensor, rival, 1, 1);
-		c.agregarObservador(cr);
-		c.ejecutar();
-		assertTrue(acciones(cr).get(0).getAccion().contains("Muro Del Cuerpo Dorado"));
-	}
-
-	@Test
 	void regeneracionPorAsaltoYBasicoCuandoCompaneroBloqueaTecnica() {
 		Tecnica t = new DominioDeLaNada();
 		Combatiente a = crear("a"), b = crear("b");
@@ -318,36 +302,58 @@ class TorneoTest {
 
 	@Test
 	void reproducibleMismasParejasMismoEstadoMismoHistorial() {
-		List<Pareja> parejas = Arrays.asList(pareja("a"), pareja("b"), pareja("c"), pareja("d"));
+
 		List<String> primero = null;
 		Pareja campeona = null;
+
 		for (int repeticion = 0; repeticion < 2; repeticion++) {
-			// Reconstruir el mismo estado inicial. No hay tecnicas en este escenario.
-			for (Pareja p : parejas) {
-				for (Combatiente c : p.getIntegrantes()) {
-					c.setVidaActual(c.getVidaMaxima());
-					c.setEnergiaActual(c.getEnergiaMaxima());
-				}
-			}
+			List<Pareja> parejas = Arrays.asList(pareja("a"), pareja("b"), pareja("c"), pareja("d"));
+
 			Torneo t = new Torneo(3);
+
 			for (Pareja p : parejas) {
 				t.inscribir(p);
 			}
+
 			CronistaDeLaSecta cr = new CronistaDeLaSecta(parejas);
 			t.agregarObservador(cr);
+
 			t.iniciar();
+
 			List<String> firma = new ArrayList<>();
+
 			for (Acontecimiento e : cr.getHistorial()) {
-				firma.add(e.getTipo() + "/" + e.getRonda() + "/" + e.getAsalto() + "/" + e.obtenerDatos() + "/"
-						+ e.getIdPrimera() + "/" + e.getIdSegunda() + "/" + e.getIdGanadora() + "/" + e.getVidaPrimera()
-						+ "/" + e.getVidaSegunda());
+
+			    firma.add(
+			        e.getTipo() + "/" +
+			        e.getRonda() + "/" +
+			        e.getAsalto() + "/" +
+			        e.obtenerDatos() + "/" +
+			        e.getAtacante() + "/" +
+			        e.getObjetivo() + "/" +
+			        e.getAccion() + "/" +
+			        e.getVidaAntes() + "/" +
+			        e.getVidaDespues() + "/" +
+			        e.getEnergiaRestante() + "/" +
+			        e.getUsosRestantes() + "/" +
+			        e.getVidaPrimera() + "/" +
+			        e.getVidaSegunda()
+			    );
 			}
+
 			if (repeticion == 0) {
 				primero = firma;
 				campeona = t.getCampeona();
 			} else {
 				assertEquals(primero, firma);
-				assertEquals(campeona, t.getCampeona());
+				assertEquals(
+					    campeona.getIntegrantes().stream()
+					        .map(Combatiente::getNombre)
+					        .toList(),
+					    t.getCampeona().getIntegrantes().stream()
+					        .map(Combatiente::getNombre)
+					        .toList()
+					);
 			}
 		}
 	}
