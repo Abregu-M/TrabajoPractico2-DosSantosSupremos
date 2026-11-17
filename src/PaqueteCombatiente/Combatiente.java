@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import PaqueteEfectos.Efecto;
 import PaqueteEquipamiento.Equipamiento;
 import PaqueteTecnica.Tecnica;
 
@@ -20,8 +21,10 @@ public abstract class Combatiente {
 	private boolean enCombate = false;
 	private final Map<Tecnica, Integer> usosPorTecnica = new LinkedHashMap<>();
 	private int defensaTecnica;
+	private static final int DANIO_ATAQUE_BASICO = 20;
 
 	private final List<Equipamiento> equipamientos;
+	private final List<Efecto> efectos = new ArrayList<>();
 
 	// El ID lo recibira del CreadorCombatientes, como indica el UML.
 	protected Combatiente(int id, String nombre, int vidaMax, int energiaMax) {
@@ -201,11 +204,19 @@ public abstract class Combatiente {
 	}
 
 	public void atacar(Combatiente objetivo) {
-		validarActor();
-		if (objetivo == null || objetivo == this || !objetivo.enCombate || !objetivo.estaEnPie()) {
-			throw new IllegalArgumentException("Objetivo invalido.");
-		}
-		objetivo.recibirDanio(modificarDanioProvocado(10));
+	    validarActor();
+
+	    if (objetivo == null || objetivo == this || !objetivo.enCombate || !objetivo.estaEnPie()) {
+	        throw new IllegalArgumentException("Objetivo invalido.");
+	    }
+
+	    int danio = DANIO_ATAQUE_BASICO;
+
+	    for (Efecto efecto : efectos) {
+	        danio = efecto.modificarDanioProvocado(danio);
+	    }
+
+	    objetivo.recibirDanio(modificarDanioProvocado(danio));
 	}
 
 	public void usarTecnica(Tecnica tecnica, Combatiente objetivo) {
@@ -266,5 +277,22 @@ public abstract class Combatiente {
 		}
 		Combatiente combatiente = (Combatiente) otro;
 		return id == combatiente.id;
+	}
+	
+	
+	public void agregarEfecto(Efecto efecto) {
+	    if (efecto == null) {
+	        throw new IllegalArgumentException("El efecto no puede ser nulo.");
+	    }
+
+	    efectos.add(efecto);
+	}
+	
+	public void iniciarTurno() {
+	    for (Efecto efecto : new ArrayList<>(efectos)) {
+	        efecto.aplicarAlInicioDelTurno(this);
+	    }
+
+	    efectos.removeIf(Efecto::haFinalizado);
 	}
 }

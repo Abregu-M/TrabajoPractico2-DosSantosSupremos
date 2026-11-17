@@ -6,17 +6,21 @@ import java.util.List;
 import PaqueteAcontecimientos.*;
 import PaqueteCombatiente.Combatiente;
 import PaqueteTecnica.Tecnica;
+import PaqueteEfectos.Determinacion;
+import PaqueteTecnica.AguijonDeLaSerpienteInmortal;
 
 public class Combate {
 	public static final int RECUPERACION_ENERGIA = 5;
-	private final Pareja primera;
-	private final Pareja segunda;
+	private final Pareja primerPareja;
+	private final Pareja segundaPareja;
 	private final int ronda;
 	private final int limiteAsaltos;
 	private final List<Observador> observadores = new ArrayList<>();
 	private boolean ejecutado;
 	private int asalto;
-
+	private static final int BONUS_DETERMINACION = 8;
+	private static final double UMBRAL_CURACION = 0.40;
+	
 	public Combate(Pareja primera, Pareja segunda, int ronda, int limiteAsaltos) {
 		if (primera == null || segunda == null || primera.getId() == segunda.getId() || ronda < 1
 				|| limiteAsaltos < 1) {
@@ -27,18 +31,18 @@ public class Combate {
 				throw new IllegalArgumentException("Combatiente en las dos parejas.");
 			}
 		}
-		this.primera = primera;
-		this.segunda = segunda;
+		this.primerPareja = primera;
+		this.segundaPareja = segunda;
 		this.ronda = ronda;
 		this.limiteAsaltos = limiteAsaltos;
 	}
 
 	public Pareja getPrimera() {
-		return primera;
+		return primerPareja;
 	}
 
 	public Pareja getSegunda() {
-		return segunda;
+		return segundaPareja;
 	}
 
 	public int getAsaltosJugados() {
@@ -88,12 +92,12 @@ public class Combate {
 			}
 		}
 		ejecutado = true;
-		primera.iniciarCombate();
-		segunda.iniciarCombate();
+		primerPareja.iniciarCombate();
+		segundaPareja.iniciarCombate();
 		try {
-			anunciar(TipoAcontecimiento.INICIO_COMBATE, primera.getNombre() + "  VS  " + segunda.getNombre());
-			Pareja empieza = primera.getId() < segunda.getId() ? primera : segunda;
-			Pareja otra = empieza == primera ? segunda : primera;
+			anunciar(TipoAcontecimiento.INICIO_COMBATE, primerPareja.getNombre() + "  VS  " + segundaPareja.getNombre());
+			Pareja empieza = primerPareja.getId() < segundaPareja.getId() ? primerPareja : segundaPareja;
+			Pareja otra = empieza == primerPareja ? segundaPareja : primerPareja;
 			for (asalto = 1; asalto <= limiteAsaltos; asalto++) {
 				for (Combatiente c : todos()) {
 					c.recuperarEnergia(RECUPERACION_ENERGIA);
@@ -111,30 +115,30 @@ public class Combate {
 			asalto = Math.min(asalto, limiteAsaltos);
 			Pareja ganadora;
 			String motivo;
-			if (primera.ambosCaidos() || segunda.ambosCaidos()) {
-				ganadora = primera.ambosCaidos() ? segunda : primera;
+			if (primerPareja.ambosCaidos() || segundaPareja.ambosCaidos()) {
+				ganadora = primerPareja.ambosCaidos() ? segundaPareja : primerPareja;
 				motivo = "Eliminacion de ambos rivales";
 			} else {
-				int vida1 = primera.vidaTotal(), vida2 = segunda.vidaTotal();
-				ganadora = vida1 > vida2 ? primera : vida2 > vida1 ? segunda : empieza;
+				int vida1 = primerPareja.vidaTotal(), vida2 = segundaPareja.vidaTotal();
+				ganadora = vida1 > vida2 ? primerPareja : vida2 > vida1 ? segundaPareja : empieza;
 				motivo = vida1 == vida2 ? "Limite de asaltos: empate de vida, gana el menor ID"
 						: "Limite de asaltos: mayor vida total";
 			}
 			notificar(new Acontecimiento(TipoAcontecimiento.RESULTADO_COMBATE, ronda, asalto,
-					"Ganan " + ganadora.getNombre() + ". " + motivo + ".\n" + primera.getNombre() + ": "
-							+ primera.vidaTotal() + " de vida | " + segunda.getNombre() + ": " + segunda.vidaTotal()
+					"Ganan " + ganadora.getNombre() + ". " + motivo + ".\n" + primerPareja.getNombre() + ": "
+							+ primerPareja.vidaTotal() + " de vida | " + segundaPareja.getNombre() + ": " + segundaPareja.vidaTotal()
 							+ " de vida",
-					primera.getId(), segunda.getId(), ganadora.getId(), primera.vidaTotal(), segunda.vidaTotal()));
+					primerPareja.getId(), segundaPareja.getId(), ganadora.getId(), primerPareja.vidaTotal(), segundaPareja.vidaTotal()));
 			return ganadora;
 		} finally {
-			primera.finalizarCombate();
-			segunda.finalizarCombate();
+			primerPareja.finalizarCombate();
+			segundaPareja.finalizarCombate();
 		}
 	}
 
 	private List<Combatiente> todos() {
-		List<Combatiente> resultado = primera.getIntegrantes();
-		resultado.addAll(segunda.getIntegrantes());
+		List<Combatiente> resultado = primerPareja.getIntegrantes();
+		resultado.addAll(segundaPareja.getIntegrantes());
 		return resultado;
 	}
 
@@ -144,7 +148,26 @@ public class Combate {
 				return;
 			}
 			if (c.estaEnPie()) {
-				seleccionarAccion(c, propia, rival);
+			    int vidaAntes = c.getVidaActual();
+
+			    c.iniciarTurno();
+
+			    int vidaDespues = c.getVidaActual();
+
+			    if (vidaDespues < vidaAntes) {
+			        anunciar(TipoAcontecimiento.DANIO_POR_VENENO,
+			                String.format("%s recibe %d de daño por veneno (%d -> %d).",
+			                        c.getNombre(),
+			                        vidaAntes - vidaDespues,
+			                        vidaAntes,
+			                        vidaDespues));
+			    }
+
+			    if (c.estaEnPie()) {
+			        seleccionarAccion(c, propia, rival);
+			    } else {
+			        procesarEliminacion(c, propia);
+			    }
 			}
 		}
 	}
@@ -153,7 +176,7 @@ public class Combate {
 		Tecnica elegida = null;
 		// Primera recuperacion util en el orden de la escuela.
 		for (Tecnica t : c.getTecnicas()) {
-			if (t.esRecuperacion() && c.getVidaActual() < c.getVidaMaxima() && propia.puedeUsarTecnica(c, t)) {
+			if (t.esRecuperacion() && c.getVidaActual() < c.getVidaMaxima() * UMBRAL_CURACION && propia.puedeUsarTecnica(c, t)) {
 				elegida = t;
 				break;
 			}
@@ -182,12 +205,17 @@ public class Combate {
 			c.atacar(objetivo);
 			accion = "Ataque basico";
 		} else {
-			propia.usarTecnica(c, elegida, objetivo);
-			accion = elegida.getNombreVisible();
+		    propia.usarTecnica(c, elegida, objetivo);
+		    accion = elegida.getNombreVisible();
 		}
-		anunciarAccion(c, objetivo, accion, vidaAntes, elegida == null ? -1 : c.getUsosRestantes(elegida));
+		anunciarAccion(c, objetivo, accion, vidaAntes,
+		        elegida == null ? -1 : c.getUsosRestantes(elegida));
+
+		if (elegida instanceof AguijonDeLaSerpienteInmortal) {
+		    anunciar(TipoAcontecimiento.VENENO_APLICADO, objetivo.getNombre());
+		}
 		if (!objetivo.estaEnPie()) {
-			anunciar(TipoAcontecimiento.ELIMINACION, objetivo.getNombre() + " queda fuera de combate.");
+			procesarEliminacion(objetivo, rival);
 		}
 	}
 
@@ -200,5 +228,29 @@ public class Combate {
 			}
 		}
 		return elegido;
+	}
+	
+	private Combatiente obtenerCompanero(Combatiente eliminado, Pareja propia) {
+	    for (Combatiente c : propia.getIntegrantes()) {
+	        if (!c.equals(eliminado)) {
+	            return c;
+	        }
+	    }
+	    return null;
+	}
+	
+	private void procesarEliminacion(Combatiente eliminado, Pareja pareja) {
+
+	    anunciar(TipoAcontecimiento.ELIMINACION,
+	            eliminado.getNombre() + " queda fuera de combate.");
+
+	    Combatiente companero = obtenerCompanero(eliminado, pareja);
+
+	    if (companero != null && companero.estaEnPie()) {
+	        companero.agregarEfecto(new Determinacion(BONUS_DETERMINACION));
+
+	        anunciar(TipoAcontecimiento.DETERMINACION_ACTIVADA,
+	                companero.getNombre());
+	    }
 	}
 }

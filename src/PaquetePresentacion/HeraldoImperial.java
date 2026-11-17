@@ -72,7 +72,7 @@ public class HeraldoImperial implements Observador {
 					e.getUsosRestantes() == -1 ? "-" : String.valueOf(e.getUsosRestantes())));
 			break;
 		case ELIMINACION:
-			anunciar("    ** " + e.obtenerDatos());
+			anunciar("     ** " + e.obtenerDatos());
 			break;
 		case RESULTADO_COMBATE:
 			resultados.put(e.getIdPrimera(), e);
@@ -86,6 +86,18 @@ public class HeraldoImperial implements Observador {
 			anunciar("  " + e.obtenerDatos());
 			anunciar("===============================================================");
 			break;
+		case DETERMINACION_ACTIVADA:
+		    anunciar(String.format(
+		        "     ¡%s reúne sus últimas fuerzas por su compañero caído!",
+		        e.obtenerDatos()));
+		    anunciar("     ** Su daño de ataque básico aumenta.");
+		    break;
+		case VENENO_APLICADO:
+		    anunciar(String.format("     ** %s ha sido envenenado.",e.obtenerDatos()));
+		    break;
+		case DANIO_POR_VENENO:
+		    anunciar("     ** " + e.obtenerDatos());
+		    break;
 		default:
 			break;
 		}

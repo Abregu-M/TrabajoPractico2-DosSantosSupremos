@@ -18,13 +18,17 @@ public class Main {
 		Tecnica dominio = new DominioDeLaNada();
 		Tecnica meditacion = new MeditacionDelInmortal();
 		Tecnica muro = new MuroDelCuerpoDorado();
+		Tecnica aguijon = new AguijonDeLaSerpienteInmortal();
 		
 		Escuela espada = new Escuela("Escuela de la Espada Celestial", Arrays.asList(corte, rugido),
 				Arrays.<Equipamiento>asList(new EspadaCelestial()));
-		Escuela palacio = new Escuela("Palacio del Vacio", Arrays.asList(dominio, meditacion),
+		
+		Escuela palacio = new Escuela("Palacio del Vacio", Arrays.asList(dominio, meditacion, aguijon),
 				Arrays.<Equipamiento>asList(new AnilloEspiritual()));
+		
 		Escuela monasterio = new Escuela("Monasterio del Cuerpo Dorado", Arrays.asList(muro, meditacion),
 				Arrays.<Equipamiento>asList(new ArmaduraDorada(), new SelloDelFenix()));
+		
 		Escuela[] escuelas = { espada, palacio, monasterio };
 		
 		HeraldoImperial heraldo = new HeraldoImperial();

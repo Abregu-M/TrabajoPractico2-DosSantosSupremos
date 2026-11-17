@@ -9,12 +9,12 @@ public class MeditacionDelInmortal extends Tecnica {
 	}
 
 	public MeditacionDelInmortal() {
-		super("MeditacionDelInmortal", 8);
+		super("MeditacionDelInmortal", 35);
 	}
 
 	@Override
 	public void ejecutar(Combatiente ejecutor, Combatiente objetivo) {
 		validarObjetivo(ejecutor, objetivo, true);
-		ejecutor.recuperarVida(20);
+		ejecutor.recuperarVida(15);
 	}
 }
