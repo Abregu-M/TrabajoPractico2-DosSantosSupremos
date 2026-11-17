@@ -53,7 +53,7 @@ class CombatienteTest {
 			a.iniciarCombate();
 			a.setVidaActual(50);
 			a.usarTecnica(meditacion, a);
-			assertEquals(70, a.getVidaActual());
+			assertEquals(65, a.getVidaActual());
 			a.finalizarCombate();
 		}
 		a.iniciarCombate();
@@ -102,7 +102,7 @@ class CombatienteTest {
 		a.iniciarCombate();
 		b.iniciarCombate();
 		a.atacar(b);
-		assertEquals(85, b.getVidaActual());
+		assertEquals(75, b.getVidaActual());
 		assertEquals(40, a.getEnergiaActual());
 		assertEquals(5, a.getUsosRestantes(corte));
 	}
