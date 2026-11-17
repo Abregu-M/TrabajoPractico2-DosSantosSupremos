@@ -269,14 +269,16 @@ public abstract class Combatiente {
 
 	@Override
 	public final boolean equals(Object otro) {
-		if (this == otro) {
-			return true;
-		}
-		if (!(otro instanceof Combatiente)) {
-			return false;
-		}
-		Combatiente combatiente = (Combatiente) otro;
-		return id == combatiente.id;
+	    if (this == otro) {
+	        return true;
+	    }
+
+	    if (otro == null) {
+	        return false;
+	    }
+
+	    Combatiente combatiente = (Combatiente) otro;
+	    return id == combatiente.id;
 	}
 	
 	
