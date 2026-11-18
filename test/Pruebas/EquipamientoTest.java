@@ -189,14 +189,15 @@ class EquipamientoTest {
 
 	@Test
 	void identidadDependeDelIdYNoDelNombre() {
-		Combatiente a = nuevo();
-		Combatiente b = new CombatienteDePrueba(1, "Otro nombre");
-		Combatiente distinto = new CombatienteDePrueba(2, "Aurelio");
-		assertEquals(a, b);
-		assertEquals(a.hashCode(), b.hashCode());
-		assertNotEquals(a, distinto);
-		assertNotEquals(a, null);
-		assertNotEquals(a, "Aurelio");
+	    Combatiente a = nuevo();
+	    Combatiente b = new CombatienteDePrueba(1, "Otro nombre");
+	    Combatiente distinto = new CombatienteDePrueba(2, "Aurelio");
+	    
+	    assertEquals(a, b);
+	    assertEquals(a.hashCode(), b.hashCode());
+	    assertNotEquals(a, distinto);
+	    assertNotEquals(a, null);
+	    assertNotEquals(a, "Aurelio");
 	}
 
 	@Test

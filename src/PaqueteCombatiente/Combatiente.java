@@ -277,8 +277,12 @@ public abstract class Combatiente {
 	        return false;
 	    }
 
-	    Combatiente combatiente = (Combatiente) otro;
-	    return id == combatiente.id;
+	    try {
+	        Combatiente combatiente = (Combatiente) otro;
+	        return this.id == combatiente.id;
+	    } catch (ClassCastException e) {
+	        return false;
+	    }
 	}
 	
 	
